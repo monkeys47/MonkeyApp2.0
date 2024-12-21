@@ -1,0 +1,26 @@
+# Excluir carpetas de configuración del editor
+.vscode/
+.streamlit/
+AppData/
+
+# Excluir archivos temporales y de caché
+*.log
+*.cache
+
+# Excluir archivos JSON específicos
+*.json
+
+# Excluir archivos específicos generados por el sistema
+NTUSER.DAT*
+OneDrive/
+Saved Games/
+Searches/
+Videos/
+
+# Excluir carpetas comunes de perfiles de usuario
+Contacts/
+Downloads/
+Favorites/
+IntelGraphicsProfiles/
+Links/
+Music/

@@ -1,14 +1,18 @@
 import streamlit as st
 
+# Simulación de base de datos
+usuarios = {
+    "admin": "admin123",
+    "monke@47": "07052004er"  # Usuario adicional agregado
+}
+
 # Variables de sesión
 if "usuario_activo" not in st.session_state:
     st.session_state["usuario_activo"] = None
-if "usuarios" not in st.session_state:
-    st.session_state["usuarios"] = {"admin": "admin123"}
 
 # Función para manejar el inicio de sesión
 def iniciar_sesion(usuario, contraseña):
-    if usuario in st.session_state["usuarios"] and st.session_state["usuarios"][usuario] == contraseña:
+    if usuario in usuarios and usuarios[usuario] == contraseña:
         st.session_state["usuario_activo"] = usuario
         return True
     return False
@@ -19,9 +23,9 @@ def cerrar_sesion():
 
 # Función para agregar un nuevo usuario
 def agregar_usuario(usuario, contraseña):
-    if usuario in st.session_state["usuarios"]:
+    if usuario in usuarios:
         return "El usuario ya existe."
-    st.session_state["usuarios"][usuario] = contraseña
+    usuarios[usuario] = contraseña
     return "Usuario agregado exitosamente."
 
 # Menú de la aplicación
