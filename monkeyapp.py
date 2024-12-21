@@ -1,6 +1,6 @@
 import streamlit as st
 
-# Simulación de base de datos con formato correcto
+# Simulación de base de datos
 usuarios = {
     "admin": {"contraseña": "admin123", "tipo": "permanente"}
 }
@@ -11,7 +11,7 @@ if "usuario_activo" not in st.session_state:
 
 # Función para manejar el inicio de sesión
 def iniciar_sesion(usuario, contraseña):
-    if usuario in usuarios and usuarios[usuario].get("contraseña") == contraseña:
+    if usuario in usuarios and usuarios[usuario]["contraseña"] == contraseña:
         st.session_state["usuario_activo"] = usuario
         return True
     return False
@@ -26,6 +26,16 @@ def agregar_usuario(usuario, contraseña, tipo):
         return "El usuario ya existe."
     usuarios[usuario] = {"contraseña": contraseña, "tipo": tipo}
     return "Usuario agregado exitosamente."
+
+# Función para procesar correos
+def procesar_correos(lista_correos):
+    resultados = []
+    for correo in lista_correos:
+        if "@" in correo and "." in correo.split("@")[-1]:
+            resultados.append(f"{correo} - Válido")
+        else:
+            resultados.append(f"{correo} - Inválido")
+    return resultados
 
 # Interfaz principal
 if st.session_state["usuario_activo"] is None:
@@ -50,8 +60,11 @@ else:
     st.write("Aquí puedes gestionar y probar correos funcionales.")
     correos = st.text_area("Escribe los correos a probar (uno por línea):")
     if st.button("Probar correos"):
-        st.write("Procesando correos...")
-        # Aquí puedes agregar lógica para verificar los correos
+        lista_correos = correos.split("\n")
+        resultados = procesar_correos(lista_correos)
+        st.write("Resultados:")
+        for resultado in resultados:
+            st.write(resultado)
 
     # Agregar usuarios (solo visible para administradores)
     if st.session_state["usuario_activo"] == "admin":
