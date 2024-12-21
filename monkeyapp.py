@@ -1,9 +1,15 @@
 import streamlit as st
+import json
+import os
 
-# Simulación de base de datos
-usuarios = {
-    "admin": {"contraseña": "admin123", "tipo": "permanente"}
-}
+# Verificar si existe un archivo usuarios.json para cargar los usuarios
+if os.path.exists("usuarios.json"):
+    with open("usuarios.json", "r") as file:
+        usuarios = json.load(file)
+else:
+    usuarios = {
+        "admin": {"contraseña": "admin123", "tipo": "permanente"}
+    }
 
 # Variables de sesión
 if "usuario_activo" not in st.session_state:
@@ -11,7 +17,7 @@ if "usuario_activo" not in st.session_state:
 
 # Función para manejar el inicio de sesión
 def iniciar_sesion(usuario, contraseña):
-    if usuario in usuarios and "contraseña" in usuarios[usuario] and usuarios[usuario]["contraseña"] == contraseña:
+    if usuario in usuarios and usuarios[usuario]["contraseña"] == contraseña:
         st.session_state["usuario_activo"] = usuario
         return True
     return False
@@ -25,9 +31,11 @@ def agregar_usuario(usuario, contraseña, tipo):
     if usuario in usuarios:
         return "El usuario ya existe."
     usuarios[usuario] = {"contraseña": contraseña, "tipo": tipo}
+    with open("usuarios.json", "w") as file:
+        json.dump(usuarios, file)
     return "Usuario agregado exitosamente."
 
-# Menú de la aplicación
+# Pantalla principal
 if st.session_state["usuario_activo"] is None:
     # Pantalla de inicio de sesión
     st.title("Inicio de sesión")
@@ -36,7 +44,6 @@ if st.session_state["usuario_activo"] is None:
     if st.button("Iniciar sesión"):
         if iniciar_sesion(usuario, contraseña):
             st.success("¡Inicio de sesión exitoso!")
-            st.session_state["usuario_activo"] = usuario
         else:
             st.error("Usuario o contraseña incorrectos")
 else:
@@ -52,7 +59,8 @@ else:
     correos = st.text_area("Escribe los correos a probar (uno por línea):")
     if st.button("Probar correos"):
         st.write("Procesando correos...")
-        # Aquí puedes agregar lógica para verificar los correos
+        lista_correos = correos.split("\n")
+        st.write(f"Se procesaron {len(lista_correos)} correos.")
 
     # Agregar usuarios (solo visible para administradores)
     if st.session_state["usuario_activo"] == "admin":
