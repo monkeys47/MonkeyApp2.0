@@ -1,14 +1,19 @@
-# Excluir carpetas de configuración del editor
+# Excluir configuraciones de Visual Studio Code
 .vscode/
+.vscode-insiders/
+
+# Excluir configuraciones locales
+.streamlit/
+.gitconfig
+.lesshst
 AppData/
+Contacts/
+Downloads/
+Favorites/
+IntelGraphicsProfiles/
+Links/
+Music/
 
-# Excluir archivos temporales y de caché
-*.log
-*.cache
-
-# Excluir archivos JSON específicos
-*.json
-
-# Ignorar archivos específicos de Brave y AppData
-AppData/Local/BraveSoftware/
-AppData/Local/Temp/
+# Excluir archivos del sistema
+NTUSER.DAT
+NTUSER.DAT*
