@@ -1,31 +1,44 @@
-# Excluir configuraciones del editor
+# Excluir carpetas de configuración del editor
 .vscode/
+.idea/
 .vscode-insiders/
 
-# Excluir archivos temporales y de caché
-.streamlit/
-*.log
-*.cache
-_pycache_/
-
-# Excluir datos de usuario y otros directorios del sistema
+# Excluir archivos y carpetas temporales del sistema operativo
 AppData/
 NTUSER.DAT
 NTUSER.DAT.LOG*
-ntuser.ini
+*.regtrans-ms
+*.blf
+Thumbs.db
+desktop.ini
 
-# Excluir archivos JSON y bases de datos
-*.json
-usuarios.db
-
-# Excluir carpetas y archivos temporales del sistema
+# Excluir carpetas de usuario específicas
 Contacts/
 Downloads/
 Favorites/
-IntelGraphicsProfiles/
 Links/
 Music/
 OneDrive/
 Saved Games/
 Searches/
 Videos/
+
+# Excluir logs y archivos temporales
+*.log
+*.cache
+*.tmp
+*.bak
+
+# Excluir archivos Python específicos
+_pycache_/
+*.py[cod]
+*.sqlite3
+usuarios.db
+
+# Excluir dependencias instaladas en el entorno virtual
+venv/
+.env/
+*.env
+
+# Excluir otros archivos no deseados
+.DS_Store
