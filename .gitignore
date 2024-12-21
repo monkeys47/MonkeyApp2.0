@@ -1,26 +1,31 @@
-# Excluir carpetas de configuración del editor
+# Excluir configuraciones del editor
 .vscode/
-.streamlit/
-AppData/
+.vscode-insiders/
 
 # Excluir archivos temporales y de caché
+.streamlit/
 *.log
 *.cache
+_pycache_/
 
-# Excluir archivos JSON específicos
+# Excluir datos de usuario y otros directorios del sistema
+AppData/
+NTUSER.DAT
+NTUSER.DAT.LOG*
+ntuser.ini
+
+# Excluir archivos JSON y bases de datos
 *.json
+usuarios.db
 
-# Excluir archivos específicos generados por el sistema
-NTUSER.DAT*
-OneDrive/
-Saved Games/
-Searches/
-Videos/
-
-# Excluir carpetas comunes de perfiles de usuario
+# Excluir carpetas y archivos temporales del sistema
 Contacts/
 Downloads/
 Favorites/
 IntelGraphicsProfiles/
 Links/
 Music/
+OneDrive/
+Saved Games/
+Searches/
+Videos/

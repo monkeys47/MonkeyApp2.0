@@ -2,8 +2,7 @@ import streamlit as st
 
 # Simulación de base de datos
 usuarios = {
-    "admin": "admin123",
-    "monke@47": "07052004er"  # Usuario adicional agregado
+    "admin": "admin123"
 }
 
 # Variables de sesión
@@ -37,7 +36,7 @@ if st.session_state["usuario_activo"] is None:
     if st.button("Iniciar sesión"):
         if iniciar_sesion(usuario, contraseña):
             st.success("¡Inicio de sesión exitoso!")
-            st.experimental_rerun()
+            st.experimental_set_query_params(logged_in="true")  # Redirigir con parámetros de sesión
         else:
             st.error("Usuario o contraseña incorrectos")
 else:
@@ -46,7 +45,7 @@ else:
     st.sidebar.write(f"Bienvenido, {st.session_state['usuario_activo']}!")
     if st.sidebar.button("Cerrar sesión"):
         cerrar_sesion()
-        st.experimental_rerun()
+        st.experimental_set_query_params(logged_in="false")  # Redirigir con parámetros de sesión
 
     # Funcionalidad de gestión de correos
     st.title("Gestión de correos")
