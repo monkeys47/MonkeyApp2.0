@@ -58,16 +58,27 @@ else:
     st.write("Aquí puedes gestionar y probar correos funcionales.")
     correos = st.text_area("Escribe los correos a probar (uno por línea):")
     if st.button("Probar correos"):
-        st.write("Procesando correos...")
         lista_correos = correos.split("\n")
-        
-        # Validar si cada correo tiene un formato válido
         correos_validos = []
+        correos_invalidos = []
+
         for correo in lista_correos:
+            # Validación básica del formato del correo
             if "@" in correo and "." in correo:
-                correos_validos.append(correo.strip())
-        
-        st.write(f"Se procesaron {len(correos_validos)} correos válidos.")
+                correos_validos.append(correo)
+            else:
+                correos_invalidos.append(correo)
+
+        # Mostrar resultados
+        st.write(f"Se procesaron {len(lista_correos)} correos.")
+        if correos_validos:
+            st.subheader("Correos válidos:")
+            for correo in correos_validos:
+                st.write(correo)
+        if correos_invalidos:
+            st.subheader("Correos inválidos:")
+            for correo in correos_invalidos:
+                st.write(correo)
 
     # Agregar usuarios (solo visible para administradores)
     if st.session_state["usuario_activo"] == "admin":
