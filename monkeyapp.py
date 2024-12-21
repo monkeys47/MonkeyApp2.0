@@ -1,9 +1,25 @@
 import streamlit as st
+import json
+import os
 
-# Simulación de base de datos
-usuarios = {
-    "admin": {"contraseña": "admin123", "tipo": "permanente"}
-}
+# Nombre del archivo JSON
+USUARIOS_FILE = "usuarios.json"
+
+# Función para cargar usuarios desde un archivo JSON
+def cargar_usuarios():
+    if os.path.exists(USUARIOS_FILE):
+        with open(USUARIOS_FILE, "r") as archivo:
+            return json.load(archivo)
+    else:
+        return {"admin": {"contraseña": "admin123", "tipo": "permanente"}}
+
+# Función para guardar usuarios en un archivo JSON
+def guardar_usuarios(usuarios):
+    with open(USUARIOS_FILE, "w") as archivo:
+        json.dump(usuarios, archivo)
+
+# Cargar usuarios al iniciar
+usuarios = cargar_usuarios()
 
 # Variables de sesión
 if "usuario_activo" not in st.session_state:
@@ -11,9 +27,10 @@ if "usuario_activo" not in st.session_state:
 
 # Función para manejar el inicio de sesión
 def iniciar_sesion(usuario, contraseña):
-    if usuario in usuarios and usuarios[usuario]["contraseña"] == contraseña:
-        st.session_state["usuario_activo"] = usuario
-        return True
+    if usuario in usuarios and "contraseña" in usuarios[usuario]:
+        if usuarios[usuario]["contraseña"] == contraseña:
+            st.session_state["usuario_activo"] = usuario
+            return True
     return False
 
 # Función para cerrar sesión
@@ -25,6 +42,7 @@ def agregar_usuario(usuario, contraseña, tipo):
     if usuario in usuarios:
         return "El usuario ya existe."
     usuarios[usuario] = {"contraseña": contraseña, "tipo": tipo}
+    guardar_usuarios(usuarios)
     return "Usuario agregado exitosamente."
 
 # Menú de la aplicación
@@ -36,7 +54,6 @@ if st.session_state["usuario_activo"] is None:
     if st.button("Iniciar sesión"):
         if iniciar_sesion(usuario, contraseña):
             st.success("¡Inicio de sesión exitoso!")
-            st.session_state["usuario_activo"] = usuario
         else:
             st.error("Usuario o contraseña incorrectos")
 else:
