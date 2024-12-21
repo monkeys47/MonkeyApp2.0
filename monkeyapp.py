@@ -1,16 +1,9 @@
 import streamlit as st
-import json
 
-# Cargar datos de usuarios desde un archivo JSON
-try:
-    with open("usuarios.json", "r") as archivo:
-        usuarios = json.load(archivo)
-except FileNotFoundError:
-    usuarios = {
-        "admin": {"contraseña": "admin123", "tipo": "permanente"}
-    }
-    with open("usuarios.json", "w") as archivo:
-        json.dump(usuarios, archivo)
+# Simulación de base de datos con formato correcto
+usuarios = {
+    "admin": {"contraseña": "admin123", "tipo": "permanente"}
+}
 
 # Variables de sesión
 if "usuario_activo" not in st.session_state:
@@ -18,7 +11,7 @@ if "usuario_activo" not in st.session_state:
 
 # Función para manejar el inicio de sesión
 def iniciar_sesion(usuario, contraseña):
-    if usuario in usuarios and usuarios[usuario]["contraseña"] == contraseña:
+    if usuario in usuarios and usuarios[usuario].get("contraseña") == contraseña:
         st.session_state["usuario_activo"] = usuario
         return True
     return False
@@ -32,11 +25,9 @@ def agregar_usuario(usuario, contraseña, tipo):
     if usuario in usuarios:
         return "El usuario ya existe."
     usuarios[usuario] = {"contraseña": contraseña, "tipo": tipo}
-    with open("usuarios.json", "w") as archivo:
-        json.dump(usuarios, archivo)
     return "Usuario agregado exitosamente."
 
-# Menú de la aplicación
+# Interfaz principal
 if st.session_state["usuario_activo"] is None:
     # Pantalla de inicio de sesión
     st.title("Inicio de sesión")
@@ -45,7 +36,6 @@ if st.session_state["usuario_activo"] is None:
     if st.button("Iniciar sesión"):
         if iniciar_sesion(usuario, contraseña):
             st.success("¡Inicio de sesión exitoso!")
-            st.session_state["usuario_activo"] = usuario
         else:
             st.error("Usuario o contraseña incorrectos")
 else:
@@ -55,7 +45,7 @@ else:
     if st.sidebar.button("Cerrar sesión"):
         cerrar_sesion()
 
-    # Funcionalidad de gestión de correos (accesible para todos los usuarios)
+    # Funcionalidad de gestión de correos
     st.title("Gestión de correos")
     st.write("Aquí puedes gestionar y probar correos funcionales.")
     correos = st.text_area("Escribe los correos a probar (uno por línea):")
