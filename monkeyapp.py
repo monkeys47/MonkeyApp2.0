@@ -1,9 +1,24 @@
 import streamlit as st
+import json
 
-# Simulación de base de datos
-usuarios = {
-    "admin": {"contraseña": "admin123", "tipo": "permanente"}
-}
+# Archivo para almacenar usuarios
+USUARIOS_FILE = "usuarios.json"
+
+# Cargar usuarios desde un archivo JSON
+def cargar_usuarios():
+    try:
+        with open(USUARIOS_FILE, "r") as archivo:
+            return json.load(archivo)
+    except FileNotFoundError:
+        return {"admin": {"contraseña": "admin123", "tipo": "permanente"}}
+
+# Guardar usuarios en un archivo JSON
+def guardar_usuarios(usuarios):
+    with open(USUARIOS_FILE, "w") as archivo:
+        json.dump(usuarios, archivo)
+
+# Cargar usuarios al iniciar la aplicación
+usuarios = cargar_usuarios()
 
 # Variables de sesión
 if "usuario_activo" not in st.session_state:
@@ -25,19 +40,10 @@ def agregar_usuario(usuario, contraseña, tipo):
     if usuario in usuarios:
         return "El usuario ya existe."
     usuarios[usuario] = {"contraseña": contraseña, "tipo": tipo}
+    guardar_usuarios(usuarios)
     return "Usuario agregado exitosamente."
 
-# Función para procesar correos
-def procesar_correos(lista_correos):
-    resultados = []
-    for correo in lista_correos:
-        if "@" in correo and "." in correo.split("@")[-1]:
-            resultados.append(f"{correo} - Válido")
-        else:
-            resultados.append(f"{correo} - Inválido")
-    return resultados
-
-# Interfaz principal
+# Menú de la aplicación
 if st.session_state["usuario_activo"] is None:
     # Pantalla de inicio de sesión
     st.title("Inicio de sesión")
@@ -54,17 +60,6 @@ else:
     st.sidebar.write(f"Bienvenido, {st.session_state['usuario_activo']}!")
     if st.sidebar.button("Cerrar sesión"):
         cerrar_sesion()
-
-    # Funcionalidad de gestión de correos
-    st.title("Gestión de correos")
-    st.write("Aquí puedes gestionar y probar correos funcionales.")
-    correos = st.text_area("Escribe los correos a probar (uno por línea):")
-    if st.button("Probar correos"):
-        lista_correos = correos.split("\n")
-        resultados = procesar_correos(lista_correos)
-        st.write("Resultados:")
-        for resultado in resultados:
-            st.write(resultado)
 
     # Agregar usuarios (solo visible para administradores)
     if st.session_state["usuario_activo"] == "admin":
