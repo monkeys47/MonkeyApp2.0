@@ -1,9 +1,23 @@
 import streamlit as st
+import json
+import os
 
-# Simulación de base de datos
-usuarios = {
-    "admin": "admin123"
-}
+# Archivo para guardar usuarios permanentes
+ARCHIVO_USUARIOS = "usuarios.json"
+
+# Cargar usuarios desde el archivo, si existe
+if os.path.exists(ARCHIVO_USUARIOS):
+    with open(ARCHIVO_USUARIOS, "r") as file:
+        usuarios_permanentes = json.load(file)
+else:
+    usuarios_permanentes = {}
+
+# Usuarios temporales (estos no se guardan en disco)
+usuarios_temporales = {}
+
+# Unir usuarios permanentes y temporales
+def obtener_usuarios():
+    return {**usuarios_permanentes, **usuarios_temporales}
 
 # Variables de sesión
 if "usuario_activo" not in st.session_state:
@@ -11,6 +25,7 @@ if "usuario_activo" not in st.session_state:
 
 # Función para manejar el inicio de sesión
 def iniciar_sesion(usuario, contraseña):
+    usuarios = obtener_usuarios()
     if usuario in usuarios and usuarios[usuario] == contraseña:
         st.session_state["usuario_activo"] = usuario
         return True
@@ -21,10 +36,15 @@ def cerrar_sesion():
     st.session_state["usuario_activo"] = None
 
 # Función para agregar un nuevo usuario
-def agregar_usuario(usuario, contraseña):
-    if usuario in usuarios:
+def agregar_usuario(usuario, contraseña, permanente=False):
+    if usuario in obtener_usuarios():
         return "El usuario ya existe."
-    usuarios[usuario] = contraseña
+    if permanente:
+        usuarios_permanentes[usuario] = contraseña
+        with open(ARCHIVO_USUARIOS, "w") as file:
+            json.dump(usuarios_permanentes, file)
+    else:
+        usuarios_temporales[usuario] = contraseña
     return "Usuario agregado exitosamente."
 
 # Menú de la aplicación
@@ -59,6 +79,7 @@ else:
         st.subheader("Agregar nuevo usuario")
         nuevo_usuario = st.text_input("Nuevo usuario")
         nueva_contraseña = st.text_input("Contraseña del nuevo usuario", type="password")
+        permanente = st.checkbox("¿Hacer el usuario permanente?")
         if st.button("Agregar usuario"):
-            mensaje = agregar_usuario(nuevo_usuario, nueva_contraseña)
+            mensaje = agregar_usuario(nuevo_usuario, nueva_contraseña, permanente)
             st.success(mensaje)
