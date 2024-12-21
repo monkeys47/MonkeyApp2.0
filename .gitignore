@@ -8,3 +8,7 @@ AppData/
 
 # Excluir archivos JSON específicos
 *.json
+
+# Ignorar archivos específicos de Brave y AppData
+AppData/Local/BraveSoftware/
+AppData/Local/Temp/
