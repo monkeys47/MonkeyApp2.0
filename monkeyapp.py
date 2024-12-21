@@ -2,42 +2,35 @@ import streamlit as st
 import json
 import os
 
-# Verificar si existe un archivo usuarios.json para cargar los usuarios
+# Cargar el archivo usuarios.json
 if os.path.exists("usuarios.json"):
     with open("usuarios.json", "r") as file:
         usuarios = json.load(file)
 else:
-    usuarios = {}
-
-# Asegurarse de que el usuario administrador esté siempre presente
-if "admin" not in usuarios:
-    usuarios["admin"] = {"contraseña": "admin123", "tipo": "permanente"}
-    with open("usuarios.json", "w") as file:
-        json.dump(usuarios, file)
+    usuarios = {
+        "admin": {"password": "admin123", "tipo": "permanente"}
+    }
 
 # Variables de sesión
 if "usuario_activo" not in st.session_state:
     st.session_state["usuario_activo"] = None
 
 # Función para manejar el inicio de sesión
-def iniciar_sesion(usuario, contraseña):
-    try:
-        if usuario in usuarios and usuarios[usuario]["contraseña"] == contraseña:
-            st.session_state["usuario_activo"] = usuario
-            return True
-        return False
-    except KeyError:
-        return False
+def iniciar_sesion(usuario, password):
+    if usuario in usuarios and usuarios[usuario]["password"] == password:
+        st.session_state["usuario_activo"] = usuario
+        return True
+    return False
 
 # Función para cerrar sesión
 def cerrar_sesion():
     st.session_state["usuario_activo"] = None
 
 # Función para agregar un nuevo usuario
-def agregar_usuario(usuario, contraseña, tipo):
+def agregar_usuario(usuario, password, tipo):
     if usuario in usuarios:
         return "El usuario ya existe."
-    usuarios[usuario] = {"contraseña": contraseña, "tipo": tipo}
+    usuarios[usuario] = {"password": password, "tipo": tipo}
     with open("usuarios.json", "w") as file:
         json.dump(usuarios, file)
     return "Usuario agregado exitosamente."
@@ -47,9 +40,9 @@ if st.session_state["usuario_activo"] is None:
     # Pantalla de inicio de sesión
     st.title("Inicio de sesión")
     usuario = st.text_input("Usuario")
-    contraseña = st.text_input("Contraseña", type="password")
+    password = st.text_input("Contraseña", type="password")
     if st.button("Iniciar sesión"):
-        if iniciar_sesion(usuario, contraseña):
+        if iniciar_sesion(usuario, password):
             st.success("¡Inicio de sesión exitoso!")
         else:
             st.error("Usuario o contraseña incorrectos")
@@ -73,8 +66,8 @@ else:
     if st.session_state["usuario_activo"] == "admin":
         st.subheader("Agregar nuevo usuario")
         nuevo_usuario = st.text_input("Nuevo usuario")
-        nueva_contraseña = st.text_input("Contraseña del nuevo usuario", type="password")
+        nueva_password = st.text_input("Contraseña del nuevo usuario", type="password")
         tipo_usuario = st.selectbox("Tipo de usuario", ["permanente", "temporal"])
         if st.button("Agregar usuario"):
-            mensaje = agregar_usuario(nuevo_usuario, nueva_contraseña, tipo_usuario)
+            mensaje = agregar_usuario(nuevo_usuario, nueva_password, tipo_usuario)
             st.success(mensaje)
