@@ -1,44 +1,30 @@
-# Excluir carpetas de configuración del editor
+# Ignorar carpetas de configuración del editor
 .vscode/
-.idea/
-.vscode-insiders/
+.streamlit/
 
-# Excluir archivos y carpetas temporales del sistema operativo
-AppData/
-NTUSER.DAT
-NTUSER.DAT.LOG*
-*.regtrans-ms
-*.blf
-Thumbs.db
-desktop.ini
-
-# Excluir carpetas de usuario específicas
-Contacts/
-Downloads/
-Favorites/
-Links/
-Music/
-OneDrive/
-Saved Games/
-Searches/
-Videos/
-
-# Excluir logs y archivos temporales
+# Ignorar archivos temporales y de caché
 *.log
 *.cache
 *.tmp
-*.bak
+*.swp
 
-# Excluir archivos Python específicos
-_pycache_/
-*.py[cod]
+# Ignorar bases de datos y configuraciones locales
 *.sqlite3
-usuarios.db
+*.db
+*.ini
 
-# Excluir dependencias instaladas en el entorno virtual
+# Ignorar entornos virtuales
 venv/
-.env/
-*.env
+env/
 
-# Excluir otros archivos no deseados
-.DS_Store
+# Ignorar carpetas específicas del sistema
+AppData/
+.cache/
+node_modules/
+
+# Ignorar carpetas y archivos del navegador Brave
+AppData/Local/BraveSoftware/
+
+# Ignorar archivos y configuraciones de contenedores de VS Code
+.vscode/extensions/
+.vscode-remote/
