@@ -1,24 +1,9 @@
 import streamlit as st
-import json
-import os
 
-# Ruta para guardar los usuarios en un archivo JSON
-USUARIOS_PATH = "usuarios.json"
-
-# Cargar usuarios desde el archivo JSON
-def cargar_usuarios():
-    if os.path.exists(USUARIOS_PATH):
-        with open(USUARIOS_PATH, "r") as archivo:
-            return json.load(archivo)
-    return {"admin": {"password": "admin123", "tipo": "permanente"}}
-
-# Guardar usuarios en el archivo JSON
-def guardar_usuarios(usuarios):
-    with open(USUARIOS_PATH, "w") as archivo:
-        json.dump(usuarios, archivo)
-
-# Cargar usuarios iniciales
-usuarios = cargar_usuarios()
+# Simulación de base de datos
+usuarios = {
+    "admin": {"contraseña": "admin123", "tipo": "permanente"}
+}
 
 # Variables de sesión
 if "usuario_activo" not in st.session_state:
@@ -26,7 +11,7 @@ if "usuario_activo" not in st.session_state:
 
 # Función para manejar el inicio de sesión
 def iniciar_sesion(usuario, contraseña):
-    if usuario in usuarios and usuarios[usuario]["password"] == contraseña:
+    if usuario in usuarios and usuarios[usuario]["contraseña"] == contraseña:
         st.session_state["usuario_activo"] = usuario
         return True
     return False
@@ -39,8 +24,7 @@ def cerrar_sesion():
 def agregar_usuario(usuario, contraseña, tipo):
     if usuario in usuarios:
         return "El usuario ya existe."
-    usuarios[usuario] = {"password": contraseña, "tipo": tipo}
-    guardar_usuarios(usuarios)
+    usuarios[usuario] = {"contraseña": contraseña, "tipo": tipo}
     return "Usuario agregado exitosamente."
 
 # Menú de la aplicación
@@ -52,6 +36,7 @@ if st.session_state["usuario_activo"] is None:
     if st.button("Iniciar sesión"):
         if iniciar_sesion(usuario, contraseña):
             st.success("¡Inicio de sesión exitoso!")
+            st.session_state["usuario_activo"] = usuario
         else:
             st.error("Usuario o contraseña incorrectos")
 else:
@@ -61,17 +46,20 @@ else:
     if st.sidebar.button("Cerrar sesión"):
         cerrar_sesion()
 
-    # Funcionalidad de gestión de usuarios
+    # Funcionalidad de gestión de correos (accesible para todos los usuarios)
+    st.title("Gestión de correos")
+    st.write("Aquí puedes gestionar y probar correos funcionales.")
+    correos = st.text_area("Escribe los correos a probar (uno por línea):")
+    if st.button("Probar correos"):
+        st.write("Procesando correos...")
+        # Aquí puedes agregar lógica para verificar los correos
+
+    # Agregar usuarios (solo visible para administradores)
     if st.session_state["usuario_activo"] == "admin":
-        st.title("Gestión de usuarios")
+        st.subheader("Agregar nuevo usuario")
         nuevo_usuario = st.text_input("Nuevo usuario")
         nueva_contraseña = st.text_input("Contraseña del nuevo usuario", type="password")
         tipo_usuario = st.selectbox("Tipo de usuario", ["permanente", "temporal"])
         if st.button("Agregar usuario"):
             mensaje = agregar_usuario(nuevo_usuario, nueva_contraseña, tipo_usuario)
             st.success(mensaje)
-
-# Mostrar credenciales almacenadas (solo para pruebas, eliminar en producción)
-if st.session_state["usuario_activo"] == "admin":
-    st.subheader("Credenciales almacenadas")
-    st.write(usuarios)
