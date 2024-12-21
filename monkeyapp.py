@@ -1,43 +1,40 @@
 import streamlit as st
 
-# Simulación de la función que valida correos electrónicos
-def validar_correos(correos):
+def verificar_correos(correos):
     resultados = {}
     for correo in correos:
-        if "@" in correo and "." in correo.split("@")[-1]:
-            resultados[correo] = "Válido"
-        else:
-            resultados[correo] = "Inválido"
+        # Simulación de verificación: considera todos como válidos
+        resultados[correo] = "Válido"
     return resultados
 
-# Configuración de la página de la aplicación
+# Configuración de la página
 st.set_page_config(page_title="Gestión de Correos", layout="centered")
 
-# Título principal
+# Título de la aplicación
 st.title("Gestión de Correos")
 st.write("Aquí puedes gestionar y probar correos funcionales.")
 
-# Entrada de correos electrónicos
-st.text_area(
-    "Escribe los correos a probar (uno por línea):",
-    placeholder="correo1@example.com\ncorreo2@example.com",
-    key="correos_input",
-)
+# Entrada de correos
+st.subheader("Escribe los correos a probar (uno por línea):")
+correos_input = st.text_area("Escribe los correos aquí:", height=200)
+correos_lista = [correo.strip() for correo in correos_input.split("\n") if correo.strip()]
 
-# Botón para probar correos
+# Mostrar la cantidad de correos ingresados
+st.write(f"*Cantidad de correos ingresados:* {len(correos_lista)}")
+
+# Botón para probar los correos
 if st.button("Probar correos"):
-    # Obtener los correos ingresados
-    correos_texto = st.session_state.correos_input
-    correos_lista = correos_texto.split("\n")
+    if correos_lista:
+        with st.spinner("Probando correos..."):
+            resultados = verificar_correos(correos_lista)
 
-    # Validar los correos
-    resultados = validar_correos(correos_lista)
+        # Mostrar los resultados
+        st.subheader("Resultados:")
+        for correo, estado in resultados.items():
+            st.write(f"- {correo}: *{estado}*")
 
-    # Mostrar los resultados en la interfaz
-    st.write("### Resultados:")
-    for correo, estado in resultados.items():
-        st.write(f"- *{correo}*: {estado}")
-
-# Nota al final
-st.write("---")
-st.write("App desarrollada por MonkeyCorreosCheck.")
+        # Mostrar la cantidad de correos válidos
+        validos = sum(1 for estado in resultados.values() if estado == "Válido")
+        st.write(f"*Cantidad de correos válidos:* {validos}")
+    else:
+        st.warning("Por favor, ingresa al menos un correo.")
