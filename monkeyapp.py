@@ -7,9 +7,13 @@ if os.path.exists("usuarios.json"):
     with open("usuarios.json", "r") as file:
         usuarios = json.load(file)
 else:
-    usuarios = {
-        "admin": {"contraseña": "admin123", "tipo": "permanente"}
-    }
+    usuarios = {}
+
+# Asegurarse de que el usuario administrador esté siempre presente
+if "admin" not in usuarios:
+    usuarios["admin"] = {"contraseña": "admin123", "tipo": "permanente"}
+    with open("usuarios.json", "w") as file:
+        json.dump(usuarios, file)
 
 # Variables de sesión
 if "usuario_activo" not in st.session_state:
@@ -17,10 +21,13 @@ if "usuario_activo" not in st.session_state:
 
 # Función para manejar el inicio de sesión
 def iniciar_sesion(usuario, contraseña):
-    if usuario in usuarios and usuarios[usuario]["contraseña"] == contraseña:
-        st.session_state["usuario_activo"] = usuario
-        return True
-    return False
+    try:
+        if usuario in usuarios and usuarios[usuario]["contraseña"] == contraseña:
+            st.session_state["usuario_activo"] = usuario
+            return True
+        return False
+    except KeyError:
+        return False
 
 # Función para cerrar sesión
 def cerrar_sesion():
